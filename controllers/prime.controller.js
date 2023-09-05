@@ -26,18 +26,9 @@ const cStatementPopulator = async () => {
 
 exports.populatePrimeTables = async (req, res, next) => {
   try {
-    cStatementPopulator();
-    return res.json({ data: true });
+    const data = await cStatementPopulator();
+    return res.json({ data });
   } catch (err) {
     next(err);
   }
-};
-
-exports.generateMongooseModel = async (req, res, next) => {
-  const data = `Name	Nulls	Type
-  INSTITUTION_ID	N	NUMBER(5)
-  SERNO	N	NUMBER(10)
-  `;
-
-  console.log();
 };
