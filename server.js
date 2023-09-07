@@ -1,6 +1,6 @@
 const app = require("./startup/app");
 const db = require("./startup/db");
-const PORT = 8000;
+const PORT = process.env.PORT;
 
 require("./routes")(app);
 

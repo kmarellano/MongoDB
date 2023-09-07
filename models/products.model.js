@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const productsModel = new Schema({
+const productModel = new Schema({
   INSTITUTION_ID: { type: Number, required: true },
   SERNO: { type: Number, required: true },
   SHORTCODE: { type: String, required: true },
@@ -22,4 +22,4 @@ const productsModel = new Schema({
   APPLIESTOLOAN: { type: String, required: true },
 });
 
-module.exports = mongoose.model("products", productsModel);
+module.exports = mongoose.model("product", productModel);
