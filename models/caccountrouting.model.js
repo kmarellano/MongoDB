@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const cAccountRoutingModel = new Schema({
   INSTITUTION_ID: { type: Number, required: true },
   SERNO: { type: Number, required: true },
-  CACCSERNO: { type: Number, required: true },
+  CACCSERNO: { type: Number, required: true, ref: "cAccounts" },
   FROMCACCSERNO: { type: Number },
   CARDXSERNO: { type: Number },
   RTRXNTYPE: { type: Number, required: true },

@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const currenciesModel = new Schema({
   INSTITUTION_ID: { type: Number, required: true },
   SERNO: { type: Number, required: true },
-  NUMCODE: { type: String, required: true },
+  NUMCODE: { type: String, required: true, ref: "cAccounts" },
   ALPHACODE: { type: String, required: true },
   NAME: { type: String, required: true },
   NAMESTRINGID: { type: Number, required: true },

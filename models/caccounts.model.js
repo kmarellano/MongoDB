@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const cAccountsModel = new Schema({
-  INSTITUTION_ID: { type: Number, required: true },
-  SERNO: { type: Number, required: true },
+  INSTITUTION_ID: { type: Number, required: true, ref: "cardStatusX" },
+  SERNO: { type: Number, required: true, ref: "cardX" },
   CUSTSERNO: { type: Number, required: true },
   NUMBERX: { type: String, required: true },
   PRIMARYCARDSERNO: { type: Number },
@@ -11,7 +11,7 @@ const cAccountsModel = new Schema({
   ACCOUNTTYPE: { type: String, required: true },
   BILLINGMETHOD: { type: String, required: true },
   DAILYACCRUALFLAG: { type: Number },
-  PRODUCT: { type: Number, required: true },
+  PRODUCT: { type: Number, required: true, ref: "product" },
   CURRENCY: { type: String, required: true },
   CREDITLIMIT: { type: Number, required: true },
   BALANCE: { type: Number, required: true },
@@ -35,9 +35,9 @@ const cAccountsModel = new Schema({
   CAPROFSERNO: { type: Number },
   SERVICEFEEOVERRIDESEXIST: { type: Number, required: true },
   TRXNFEEOVERRIDESEXIST: { type: Number, required: true },
-  STGENERAL: { type: String, required: true },
+  STGENERAL: { type: String, required: true, ref: "cardStatusX" },
   STFINANCIAL: { type: String, required: true },
-  STAUTHORIZATION: { type: String, required: true },
+  STAUTHORIZATION: { type: String, required: true, ref: "cardStatusX" },
   PRECHANGEREQUESTSTGENERAL: { type: String },
   NEXTSTMTSERNO: { type: Number },
   NEXTSTMTPARTITIONKEY: { type: Number },

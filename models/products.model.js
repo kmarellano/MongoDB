@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const productModel = new Schema({
   INSTITUTION_ID: { type: Number, required: true },
-  SERNO: { type: Number, required: true },
+  SERNO: { type: Number, required: true, ref: "cardX" },
   SHORTCODE: { type: String, required: true },
   GROUPCODE: { type: String },
   NAME: { type: String, required: true },

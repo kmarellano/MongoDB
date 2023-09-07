@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const peopleModel = new Schema({
   INSTITUTION_ID: { type: Number, required: true },
-  SERNO: { type: Number, required: true },
+  SERNO: { type: Number, required: true, ref: "cardX" },
   TITLE: { type: String },
   LASTNAME: { type: String, required: true },
   FIRSTNAME: { type: String },
