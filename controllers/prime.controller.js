@@ -2,11 +2,15 @@ const { faker } = require("@faker-js/faker");
 const {
   cAccountRouting,
   cAccounts,
-  cAddressLinks,
   cardStatusX,
   cardX,
   cExtension,
   cTransactions,
+  products,
+  applog,
+  currencies,
+  people,
+  // cAddressLinks,
   // cardEmbossing,
   // countries,
   // cStatementLinks,
@@ -15,37 +19,6 @@ const {
   // riskDomains,
   // trxnTypes,
 } = require("../models");
-
-const twoNumbers = [1, 2];
-
-const cStatementPopulator = async () => {
-  const cStatement = new cStatementLink({
-    INSTITUTION_ID: faker.string.numeric(5),
-    STATEMENTSERNO: faker.string.numeric(10),
-    PARTITIONKEY: faker.string.numeric(10),
-    TRXNSERNO: faker.string.numeric(10),
-    TRXNPARTITIONKEY: faker.string.numeric(10),
-    BALSTMTSERNO: faker.string.numeric(10),
-    BALSTMTPARTITIONKEY: faker.string.numeric(10),
-    LINKTYPE: letterAndNumberRandomizer(["B", "N"]),
-    CARDSERNO: faker.string.numeric(10),
-    SUMMARYINDICATOR: letterAndNumberRandomizer(twoNumbers),
-    FINANCIALINDICATOR: letterAndNumberRandomizer(twoNumbers),
-    CONVERTED: letterAndNumberRandomizer(twoNumbers),
-  });
-
-  const newStatement = await cStatement.save();
-  return newStatement;
-};
-
-exports.populatePrimeTables = async (req, res, next) => {
-  try {
-    const data = await cStatementPopulator();
-    return res.json({ data });
-  } catch (err) {
-    next(err);
-  }
-};
 
 function generateMockDataFromType(dataType) {
   const match = dataType.match(/^(\w+)(?:\((\d+)\))?/);
@@ -74,6 +47,7 @@ function generateMockDataFromType(dataType) {
     CHAR: () => faker.string.alphanumeric(length || 1),
     NCHAR: () => faker.string.alphanumeric(length || 1),
     NVARCHAR2: () => faker.string.alphanumeric(length || 10),
+    RAW: () => faker.string.hexadecimal({ length: 10, casing: "upper" }),
   };
 
   if (dataTypeMappings[type]) {
@@ -191,25 +165,6 @@ PAIDINFULLBALANCE	N	NUMBER(16,3)
 LASTBILLINGREASON	Y	CHAR(1)
 LATEPAYMENTFEETRXNSERNO	Y	NUMBER(10)
 LATEPAYMENTFEETRXNPARTITIONKEY	Y	NUMBER(10)
-`,
-  },
-  {
-    tableName: cAddressLinks,
-    tableData: `INSTITUTION_ID	N	NUMBER(5)
-SERNO	N	NUMBER(10)
-TABINDICATOR	N	CHAR(1 BYTE)
-ROWSERNO	N	NUMBER(10)
-ADDRESSSERNO	N	NUMBER(10)
-ADDRESSTYPE	Y	CHAR(5 BYTE)
-FROMDATE	Y	DATE
-UNTILDATE	Y	DATE
-ADDRESSLINKTYPE1SOURCESERNO	Y	NUMBER(10)
-ADDRESSLINKTYPE2SOURCESERNO	Y	NUMBER(10)
-ADDRESSLINKTYPE3SOURCESERNO	Y	NUMBER(10)
-ADDRESSLINKTYPE4SOURCESERNO	Y	NUMBER(10)
-ADDRESSLINKTYPE5SOURCESERNO	Y	NUMBER(10)
-LOGACTION	Y	CHAR(11)
-CONVERTED	Y	NUMBER(2)
 `,
   },
   {
@@ -427,6 +382,99 @@ CONSOLIDATIONKEY	Y	NUMBER(10)
 REWARDSFLAG	Y	NUMBER(5)
 MBHAGREEMENTSERNO	Y	NUMBER(10)
 `,
+  },
+  {
+    tableName: products,
+    tableData: `INSTITUTION_ID	N	NUMBER(5)
+    SERNO	N	NUMBER(10)
+    SHORTCODE	N	VARCHAR2(5)
+    GROUPCODE	Y	VARCHAR2(30)
+    NAME	N	VARCHAR2(30)
+    NAMESTRINGID	N	NUMBER(10)
+    DESCRIPTION	Y	VARCHAR2(255)
+    DESCRIPTIONSTRINGID	N	NUMBER(10)
+    APPLIESTOCUSTOMER	N	CHAR(1)
+    APPLIESTOACCOUNT	N	CHAR(1)
+    APPLIESTOCARD	N	CHAR(1)
+    APPLIESTORISKDOMAIN	N	CHAR(1)
+    APPLIESTOPROXYCARD	N	CHAR(1)
+    APPLIESTOMERCUSTOMER	N	CHAR(1)
+    APPLIESTOMERACCOUNT	N	CHAR(1)
+    APPLIESTOMERCHANT	N	CHAR(1)
+    APPLIESTOTERMINAL	N	CHAR(1)
+    APPLIESTOLOAN	N	CHAR(1)
+    `,
+  },
+  {
+    tableName: applog,
+    tableData: `INSTITUTION_ID	N	NUMBER(5)
+    LOGGROUPKEY	Y	RAW(16)
+    EODSERNO	N	NUMBER(10)
+    EODCYCLESERNO	Y	NUMBER(10)
+    PARTITIONKEY	N	NUMBER(10)
+    TABNAME	N	VARCHAR2(30 BYTE)
+    COLNAME	Y	VARCHAR2(30 BYTE)
+    ROWSERNO	N	NUMBER(10)
+    ROWPARTITIONKEY	Y	NUMBER(10)
+    DATETIMESTAMP	N	DATE
+    ACTIONTYPE	N	CHAR(1 BYTE)
+    ACTION	Y	CHAR(11)
+    USERNAME	Y	VARCHAR2(250)
+    REQUESTORID	Y	VARCHAR2(250)
+    OLDVALUE	Y	VARCHAR2(255)
+    NEWVALUE	Y	VARCHAR2(255)
+    CONVERTED	Y	NUMBER(2)
+    `,
+  },
+  {
+    tableName: currencies,
+    tableData: `INSTITUTION_ID	N	NUMBER(5)
+    SERNO	N	NUMBER(10)
+    NUMCODE	N	CHAR(3)
+    ALPHACODE	N	CHAR(3)
+    NAME	N	VARCHAR2(30)
+    NAMESTRINGID	N	NUMBER(10)
+    DECDIGITS	N	NUMBER(1)
+    VISADIGITS	N	NUMBER(1)
+    MCDIGITS	N	NUMBER(1)
+    `,
+  },
+  {
+    tableName: people,
+    tableData: `INSTITUTION_ID	N	NUMBER(5)
+    SERNO	N	NUMBER(10)
+    TITLE	Y	NCHAR(20)
+    LASTNAME	N	NVARCHAR2(70)
+    FIRSTNAME	Y	NCHAR(30)
+    MIDNAME	Y	NVARCHAR2(30)
+    MOTHERNAME	Y	NVARCHAR2(30)
+    ORGANIZATION	Y	NVARCHAR2(30)
+    DEPARTMENT	Y	NVARCHAR2(30)
+    POSITION	Y	NVARCHAR2(30)
+    DOB	Y	DATE
+    PERSONTYPE	Y	NUMBER(5)
+    SEX	Y	CHAR(1 BYTE)
+    MARITALSTATUS	Y	CHAR(1 BYTE)
+    SSNUMBER	Y	VARCHAR2(30)
+    CUSTIDNUMBER	Y	CHAR(25)
+    RESIDENT	Y	CHAR(1 BYTE)
+    LEGALENTITY	N	NUMBER(5)
+    EMPLOYEEID	Y	NVARCHAR2(30)
+    STGENERAL	N	CHAR(4 BYTE)
+    LANGUAGECODE	Y	VARCHAR2(10 BYTE)
+    LOGACTION	Y	CHAR(11)
+    LL_TITLE	Y	NCHAR(20)
+    LL_FIRSTNAME	Y	NCHAR(30)
+    LL_MIDNAME	Y	NCHAR(30)
+    LL_LASTNAME	Y	NVARCHAR2(70)
+    LL_MOTHERNAME	Y	NVARCHAR2(30)
+    LL_ORGANIZATION	Y	NVARCHAR2(30)
+    LL_DEPARTMENT	Y	NVARCHAR2(30)
+    LL_POSITION	Y	NVARCHAR2(30)
+    ENTITYVERSIONNO	Y	NUMBER(10)
+    CONVERTED	Y	NUMBER(2)
+    EXTERNALREFERENCE	Y	VARCHAR2(25)
+    `,
   },
 ];
 
