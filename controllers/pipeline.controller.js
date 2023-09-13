@@ -23,8 +23,8 @@ exports.runPipeline = async (req, res, next) => {
     {
       $lookup: {
         from: "peoples",
-        localField: "PEOPLESERNO",
-        foreignField: "SERNO",
+        localField: "PEOPLESERNO", // cardx
+        foreignField: "SERNO", // peoples.serno
         as: "PERSON",
       },
     },
