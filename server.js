@@ -15,7 +15,9 @@ app.listen(PORT, async () => {
   try {
     console.log(`Running on port: ${PORT}`);
     await db();
-    console.log(`Connected to database: ${process.env.MONGODB_URI}`);
+    console.log(
+      `Connected to database: ${process.env.MONGODB_URI}/${process.env.DB_COLL}`
+    );
   } catch (err) {
     throw err;
   }

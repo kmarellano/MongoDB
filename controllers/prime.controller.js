@@ -478,7 +478,7 @@ MBHAGREEMENTSERNO	Y	NUMBER(10)
   },
 ];
 
-const generateFakeData = async (Table, data) => {
+const generateFakeData = async (Table, data, toReference) => {
   const regex = new RegExp("\t|\n");
   const splits = data.trim().split(regex);
   const splittedArray = splits.map((cell) => cell.trim());
@@ -496,7 +496,14 @@ const generateFakeData = async (Table, data) => {
     const [key, , type] = item;
 
     mockData[key] = generateMockDataFromType(type);
+
+    if (toReference?.length) {
+      toReference.map(
+        (header) => (mockData[header.columnHeader] = header.replaceWith)
+      );
+    }
   }
+
   const tbInstance = new Table(mockData);
   const newTableData = await tbInstance.save();
 
@@ -515,6 +522,89 @@ exports.generateMockData = async (req, res, next) => {
     });
 
     return res.json({ message: "success" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const findCollection = (tableName) => {
+  return tables.find((table) => table.tableName === tableName);
+};
+
+const generateDataForCollection = async (tableName, toReference) => {
+  const collectionName = findCollection(tableName);
+  const collectionData = await generateFakeData(
+    collectionName.tableName,
+    collectionName.tableData,
+    toReference
+  );
+
+  return collectionData;
+};
+
+const dataGenerator = async () => {
+  const cardXData = await generateDataForCollection(cardX);
+
+  const cAccountsData = await generateDataForCollection(cAccounts, [
+    { columnHeader: "SERNO", replaceWith: cardXData.SERNO },
+  ]);
+
+  const peopleData = await generateDataForCollection(people, [
+    { columnHeader: "SERNO", replaceWith: cardXData.SERNO },
+  ]);
+
+  const productsData = await generateDataForCollection(products, [
+    { columnHeader: "SERNO", replaceWith: cAccountsData.SERNO },
+  ]);
+
+  const cardStatusXData = await generateDataForCollection(cardStatusX, [
+    {
+      columnHeader: "INSTITUTION_ID",
+      replaceWith: cAccountsData.INSTITUTION_ID,
+    },
+    {
+      columnHeader: "CODE",
+      replaceWith: cAccountsData.STGENERAL,
+    },
+  ]);
+
+  const cTransactionsData = await generateDataForCollection(cTransactions, [
+    { columnHeader: "CACCSERNO", replaceWith: cAccountsData.SERNO },
+    { columnHeader: "CARDSERNO", replaceWith: cardXData.SERNO },
+  ]);
+
+  const currenciesData = await generateDataForCollection(currencies, [
+    { columnHeader: "NUMCODE", replaceWith: cAccountsData.SERNO },
+  ]);
+
+  const cAccountRoutingData = await generateDataForCollection(cAccountRouting, [
+    { columnHeader: "CACCSERNO", replaceWith: cAccountsData.SERNO },
+  ]);
+
+  const cExtensionData = await generateDataForCollection(cExtension, [
+    { columnHeader: "ROWSERNO", replaceWith: cardXData.SERNO },
+  ]);
+  const applogData = await generateDataForCollection(applog);
+
+  return;
+};
+
+const deleteAllEntry = async () => {
+  return tables.forEach(async (table) => {
+    await table.tableName.deleteMany();
+  });
+};
+
+exports.generatePrimeWithRelation = async (req, res, next) => {
+  try {
+    const MAX_DATA = 100;
+
+    await deleteAllEntry();
+    for (let i = 0; i < MAX_DATA; i++) {
+      await await dataGenerator();
+    }
+
+    return res.json({ success: true });
   } catch (err) {
     next(err);
   }

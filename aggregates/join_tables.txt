@@ -1,0 +1,15 @@
+// # collections=(Applog Caccountrouting Caccounts Cardstatus Cardx Cextension Ctransactions Currencies People Products)
+
+db.Applog.aggregate([
+  { $unionWith: { coll: "Caccountrouting" } },
+  { $unionWith: { coll: "Caccounts" } },
+  { $unionWith: { coll: "Cardstatus" } },
+  { $unionWith: { coll: "Cardx" } },
+  { $unionWith: { coll: "Cextension" } },
+  { $unionWith: { coll: "ctransactions" } },
+  { $unionWith: { coll: "Ctransactions" } },
+  { $unionWith: { coll: "Currencies" } },
+  { $unionWith: { coll: "People" } },
+  { $unionWith: { coll: "Products" } },
+  { $merge: { into: { db: "merged", coll: "prime" } } },
+]);

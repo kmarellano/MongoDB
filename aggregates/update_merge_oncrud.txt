@@ -1,0 +1,24 @@
+exports = async function(changeEvent) {
+  const docId = changeEvent.documentKey._id;
+  const serviceName = "Cluster0";
+  const databaseName = "merged";
+  const collectionName = "prime";
+  
+  const collection = context.services.get(serviceName).db(databaseName).collection(collectionName);
+
+  try {
+    if (changeEvent.operationType === "delete") {
+      await collection.deleteOne({"_id": docId});
+    }
+
+    else if (changeEvent.operationType === "insert") {
+      await collection.insertOne(changeEvent.fullDocument);
+    }
+
+    else if (changeEvent.operationType === "update" || changeEvent.operationType === "replace") {
+      await collection.replaceOne({"_id": docId}, changeEvent.fullDocument);
+    }
+  } catch(err) {
+    console.log("error performing mongodb write: ", err.message);
+  }
+};
